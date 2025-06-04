@@ -7,56 +7,99 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int contador = 0;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(centerTitle: true, title: Text('Contador')),
+      appBar: AppBar(
+        title: Text('Home Page'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.notifications),
+            onPressed: () {
+              // Acción al presionar el botón de notificaciones
+            },
+          ),
+          IconButton(
+            icon: Icon(Icons.more_vert),
+            onPressed: () {
+              // Acción al presionar el botón de configuración
+            },
+          ),
+        ],
+      ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            DrawerHeader(
+              child: Text('Menú'),
+              decoration: BoxDecoration(color: Colors.blue),
+            ),
+            ListTile(
+              title: Text('Calendario'),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              title: Text('Horas trabajadas'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => Checkhours()),
+                );
+              },
+            ),
+            ListTile(
+              title: Text('Almacen'),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              title: Text('Personal'),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              title: Text('Tareas'),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              title: Text('Gestión Eventos'),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              title: Text('Mensajes'),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        ),
+      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [Text('Numero de clicks'), Text('contador')],
+          children: <Widget>[
+            Text('Bienvenido a la página de inicio'),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => Checkhours()),
+                );
+              },
+              child: Text('Ver horas trabajadas'),
+            ),
+          ],
         ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: _crearBotones(),
-    );
-  }
-
-  void _botonSuma() {
-    setState(() => contador++);
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => Checkhours()),
-    );
-  }
-
-  void _botonCero() {}
-
-  void _botonMenos() {}
-
-  _crearBotones() {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 10),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          FloatingActionButton(
-            child: Icon(Icons.exposure_zero),
-            onPressed: () => _botonCero(),
-          ),
-          Expanded(child: SizedBox()),
-          FloatingActionButton(
-            child: Icon(Icons.remove),
-            onPressed: () => _botonMenos(),
-          ),
-          SizedBox(width: 5),
-          FloatingActionButton(
-            child: Icon(Icons.add),
-            onPressed: () => _botonSuma(),
-          ),
-        ],
       ),
     );
   }

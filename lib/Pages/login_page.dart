@@ -1,6 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/Pages/home_page.dart';
 import 'package:flutter_application_2/service/auth_serivce.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -96,6 +100,53 @@ class _DatosState extends State<Datos> {
 
   bool _isLoading = false;
   bool obs = true;
+  bool _rememberMe = false;
+  final _storage = FlutterSecureStorage();
+  final _debouncer = _Debouncer(
+    milliseconds: 500,
+  ); // Para evitar búsquedas con cada tecla
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSavedCredentials();
+
+    // Escuchar cambios en el campo de email
+    widget.emailcontroller.addListener(_onEmailChanged);
+  }
+
+  @override
+  void dispose() {
+    widget.emailcontroller.removeListener(_onEmailChanged);
+    widget.emailcontroller.dispose();
+    widget.passwordcontroller.dispose();
+    super.dispose();
+  }
+
+  void _onEmailChanged() {
+    _debouncer.run(() async {
+      if (widget.emailcontroller.text.isEmpty) return;
+
+      final prefs = await SharedPreferences.getInstance();
+      final savedEmail = prefs.getString('saved_email');
+
+      if (savedEmail == widget.emailcontroller.text.trim()) {
+        final savedPassword = await _storage.read(key: 'saved_password');
+        if (savedPassword != null && savedPassword.isNotEmpty) {
+          setState(() {
+            widget.passwordcontroller.text = savedPassword;
+            _rememberMe = true;
+          });
+        }
+      } else {
+        setState(() {
+          widget.passwordcontroller.text = '';
+          _rememberMe = false;
+        });
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -147,7 +198,25 @@ class _DatosState extends State<Datos> {
               ),
             ),
           ),
-          Remember(),
+          Row(
+            children: [
+              Checkbox(
+                value: _rememberMe,
+                onChanged: (value) {
+                  setState(() {
+                    _rememberMe = value ?? false;
+                    _saveCredentials();
+                  });
+                },
+              ),
+              Text('Recordarme'),
+              Spacer(),
+              TextButton(
+                onPressed: () {},
+                child: Text('¿Olvidaste la contraseña?'),
+              ),
+            ],
+          ),
           SizedBox(height: 30),
           Column(
             children: [
@@ -221,6 +290,54 @@ class _DatosState extends State<Datos> {
           _isLoading = false;
         });
       }
+    }
+  }
+
+  Future<void> _saveCredentials() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (_rememberMe) {
+      await prefs.setString('saved_email', widget.emailcontroller.text.trim());
+      await _storage.write(
+        key: 'saved_password',
+        value: widget.passwordcontroller.text,
+      );
+    } else {
+      await prefs.remove('saved_email');
+      await _storage.delete(key: 'saved_password');
+    }
+  }
+
+  Future<void> _loadSavedCredentials() async {
+    final prefs = await SharedPreferences.getInstance();
+    final email = prefs.getString('saved_email') ?? '';
+
+    if (email.isNotEmpty) {
+      final password = await _storage.read(key: 'saved_password') ?? '';
+      setState(() {
+        widget.emailcontroller.text = email;
+        widget.passwordcontroller.text = password;
+        _rememberMe = true;
+      });
+    }
+  }
+}
+
+class _Debouncer {
+  final int milliseconds;
+  VoidCallback? _callback;
+  Timer? _timer;
+
+  _Debouncer({required this.milliseconds});
+
+  void run(VoidCallback callback) {
+    _callback = callback;
+    _timer?.cancel();
+    _timer = Timer(Duration(milliseconds: milliseconds), _execute);
+  }
+
+  void _execute() {
+    if (_callback != null) {
+      _callback!();
     }
   }
 }

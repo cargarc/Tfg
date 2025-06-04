@@ -1,41 +1,32 @@
 class User {
   final String dni;
   final String email;
-  final String firstName;
-  final String lastName;
-  final DateTime createdAt;
-  final DateTime lastLoginAt;
+  final double contadorHoras;
+  final String estado;
+  final double salario;
 
   User({
     required this.dni,
     required this.email,
-    required this.firstName,
-    required this.lastName,
-    required this.createdAt,
-    required this.lastLoginAt,
+    required this.contadorHoras,
+    required this.estado,
+    required this.salario,
   });
-
-  String get fullName => '$firstName $lastName';
-  String get initials =>
-      '${firstName.isNotEmpty ? firstName[0] : ''}${lastName.isNotEmpty ? lastName[0] : ''}'
-          .toUpperCase();
 
   // Create a copy of this user with potentially new values
   User copyWith({
     String? dni,
     String? email,
-    String? firstName,
-    String? lastName,
-    DateTime? createdAt,
-    DateTime? lastLoginAt,
+    String? estado,
+    double? contadorHoras,
+    double? salario,
   }) {
     return User(
       dni: dni ?? this.dni,
       email: email ?? this.email,
-      firstName: firstName ?? this.firstName,
-      lastName: lastName ?? this.lastName,
-      createdAt: createdAt ?? this.createdAt,
-      lastLoginAt: lastLoginAt ?? this.lastLoginAt,
+      contadorHoras: contadorHoras ?? 0.0,
+      estado: estado ?? '',
+      salario: salario ?? 0.0,
     );
   }
 
@@ -44,10 +35,9 @@ class User {
     return {
       'id': dni,
       'email': email,
-      'firstName': firstName,
-      'lastName': lastName,
-      'createdAt': createdAt.toIso8601String(),
-      'lastLoginAt': lastLoginAt.toIso8601String(),
+      'contadorHoras': contadorHoras,
+      'estado': estado,
+      'salario': salario,
     };
   }
 
@@ -56,14 +46,9 @@ class User {
     return User(
       dni: (json['dni'] ?? '').toString(),
       email: json['email'] ?? '',
-      firstName: json['firstName'] ?? '',
-      lastName: json['lastName'] ?? '',
-      createdAt: DateTime.parse(
-        json['createdAt'] ?? DateTime.now().toIso8601String(),
-      ),
-      lastLoginAt: DateTime.parse(
-        json['lastLoginAt'] ?? DateTime.now().toIso8601String(),
-      ),
+      contadorHoras: (json['contadorHoras'] ?? 0.0).toDouble(),
+      estado: json['estado'] ?? '',
+      salario: (json['salario'] ?? 0.0).toDouble(),
     );
   }
 }

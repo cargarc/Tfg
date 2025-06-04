@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
   static const String _usersKey = 'users';
+  static const String _currentUserKey = 'current_user';
   static const String _baseUrl = 'http://localhost:3000/api';
   Future<AuthResult> login(String email, String password) async {
     print('Intentando conectar a: $_baseUrl/auth/login');
@@ -28,6 +29,7 @@ class AuthService {
         print('Respuesta del servidor: $data');
         final user = User.fromJson(data['user']);
         await _saveUser(user);
+        await saveCurrentUser(user);
         // await _saveToken(data['token']);
         return AuthResult(success: true, user: user, message: 'Login exitoso');
       } else {
@@ -44,6 +46,22 @@ class AuthService {
       print('Error inesperado: $e');
       throw Exception('Error desconocidooooo');
     }
+  }
+
+  // Guardar usuario actual
+  Future<void> saveCurrentUser(User user) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_currentUserKey, jsonEncode(user.toJson()));
+  }
+
+  // Obtener usuario actual
+  Future<User?> getCurrentUser() async {
+    final prefs = await SharedPreferences.getInstance();
+    final userJson = prefs.getString(_currentUserKey);
+    if (userJson != null) {
+      return User.fromJson(jsonDecode(userJson));
+    }
+    return null;
   }
 
   Future<void> _saveUser(User user) async {
