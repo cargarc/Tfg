@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_2/Pages/calendar_page.dart';
 import 'package:flutter_application_2/Pages/check_hours.dart';
 
 class HomePage extends StatefulWidget {
@@ -38,7 +39,10 @@ class _HomePageState extends State<HomePage> {
             ListTile(
               title: Text('Calendario'),
               onTap: () {
-                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => CalendarPage()),
+                );
               },
             ),
             ListTile(
