@@ -1,47 +1,40 @@
 class Employee {
-  final String dni;
-  final String nombre;
-  final String apellidos;
-  final String numSS;
-  final String categoria;
-  final String email;
+  static final Employee _instance = Employee._internal();
 
-  Employee({
-    required this.dni,
-    required this.nombre,
-    required this.apellidos,
-    required this.numSS,
-    required this.categoria,
-    required this.email,
-  });
+  String? dni;
+  String? nombre;
+  String? apellidos;
+  String? numSS;
+  String? categoria; // 'gerente', 'organizacion', 'mozo', 'tecnico', 'almacen'
+  String? email;
 
-  Employee copyWith({
-    String? dni,
-    String? nombre,
-    String? apellidos,
-    String? numSS,
-    String? categoria,
-    String? email,
-  }) {
-    return Employee(
-      dni: dni ?? this.dni,
-      nombre: nombre ?? this.nombre,
-      apellidos: apellidos ?? this.apellidos,
-      numSS: numSS ?? this.numSS,
-      categoria: categoria ?? this.categoria,
-      email: email ?? this.email,
-    );
+  factory Employee() {
+    return _instance;
   }
 
-  //COnvertir empleado a JSON
+  bool get esGerente => categoria == 'gerente';
+  bool get esOrganizacion => categoria == 'organizacion';
+  bool get esRolLimitado => !esGerente && !esOrganizacion;
+
+  void fromJson(Map<String, dynamic> json) {
+    dni = json['dni'];
+    nombre = json['nombre'];
+    apellidos = json['apellidos'];
+    numSS = json['numSS'];
+    categoria = json['categoria'];
+    email = json['email'];
+  }
+
   Map<String, dynamic> toJson() {
     return {
-      'dni': dni,
-      'nombre': nombre,
-      'apellidos': apellidos,
-      'numSS': numSS,
-      'categoria': categoria,
-      'email': email,
+      'dni': this.dni,
+      'nombre': this.nombre,
+      'apellidos': this.apellidos,
+      'numSS': this.numSS,
+      'categoria': this.categoria,
+      'email': this.email,
     };
   }
+
+  Employee._internal();
 }
