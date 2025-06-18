@@ -257,12 +257,13 @@ class _DatosState extends State<Datos> {
         widget.emailcontroller.text.trim(),
         widget.passwordcontroller.text,
       );
-
       if (result.success) {
         if (mounted) {
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => HomePage()),
+            MaterialPageRoute(
+              builder: (context) => HomePage(dni: result.user!.dni),
+            ),
           );
         }
       } else {

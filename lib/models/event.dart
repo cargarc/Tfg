@@ -7,7 +7,7 @@ class Event {
   final TimeOfDay horaPrevistaIni;
   final double coste;
   final double presupuestoInicial;
-  final double presupuestoFinal;
+  final double presupuestoModificado;
   final String estado;
 
   Event({
@@ -17,31 +17,9 @@ class Event {
     required this.horaPrevistaIni,
     required this.coste,
     required this.presupuestoInicial,
-    required this.presupuestoFinal,
+    required this.presupuestoModificado,
     required this.estado,
   });
-
-  Event copyWith({
-    String? cod,
-    DateTime? fechaIni,
-    DateTime? fechaFin,
-    HourFormat? horaPrevistaIni,
-    double? coste,
-    double? presupuestoInicial,
-    double? presupuestoFinal,
-    String? estado,
-  }) {
-    return Event(
-      cod: cod ?? this.cod,
-      fechaIni: fechaIni ?? this.fechaIni,
-      fechaFin: fechaFin ?? this.fechaFin,
-      horaPrevistaIni: this.horaPrevistaIni,
-      coste: coste ?? this.coste,
-      presupuestoInicial: presupuestoInicial ?? this.presupuestoInicial,
-      presupuestoFinal: presupuestoFinal ?? this.presupuestoFinal,
-      estado: estado ?? this.estado,
-    );
-  }
 
   // Convert event to JSON
   Map<String, dynamic> toJson() {
@@ -52,8 +30,27 @@ class Event {
       'horaPrevistaIni': '${horaPrevistaIni.hour}:${horaPrevistaIni.minute}',
       'coste': coste,
       'presupuestoInicial': presupuestoInicial,
-      'presupuestoFinal': presupuestoFinal,
+      'presupuestoModificado': presupuestoModificado,
       'estado': estado,
     };
+  }
+
+  factory Event.fromJson(Map<String, dynamic> json) {
+    // Parsea la hora de un string "HH:mm"
+    final timeParts = (json['horaPrevistaIni'] as String).split(':');
+
+    return Event(
+      cod: json['cod'],
+      fechaIni: DateTime.parse(json['fechaIni']),
+      fechaFin: DateTime.parse(json['fechafin']),
+      horaPrevistaIni: TimeOfDay(
+        hour: int.parse(timeParts[0]),
+        minute: int.parse(timeParts[1]),
+      ),
+      coste: json['coste'].toDouble(),
+      presupuestoInicial: json['presupuestoInicial'].toDouble(),
+      presupuestoModificado: json['presupuestoModificado'].toDouble(),
+      estado: json['estado'],
+    );
   }
 }
