@@ -1,6 +1,7 @@
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_application_2/models/employee.dart';
 import 'package:flutter_application_2/models/event.dart';
 import 'package:flutter_application_2/service/event-service.dart';
 import 'package:intl/intl.dart';
@@ -23,6 +24,7 @@ class _CalendarPageState extends State<CalendarPage> {
 
   // Mapa para almacenar eventos (fecha -> lista de eventos)
   final Map<DateTime, List<Event>> _events = {};
+  final employee = Employee();
 
   // Lista de eventos seleccionados
   List<Event> _selectedEvents = [];
@@ -40,36 +42,40 @@ class _CalendarPageState extends State<CalendarPage> {
       _errorMessage = '';
     });
 
-    try {
-      final events = await _eventService.getEvents();
+    //try {
 
-      // Limpiar eventos anteriores
-      _events.clear();
+    final events =
+        employee.categoria == 'gerente' || employee.categoria == 'organizacion'
+            ? await _eventService.getEvents()
+            : await _eventService.getEventsByEmployee(employee.dni ?? '');
 
-      // Organizar eventos por fecha
-      for (final event in events) {
-        final dateKey = DateTime(
-          event.fechaIni.year,
-          event.fechaIni.month,
-          event.fechaIni.day,
-        );
+    // Limpiar eventos anteriores
+    _events.clear();
 
-        if (_events[dateKey] == null) {
-          _events[dateKey] = [];
-        }
-        _events[dateKey]!.add(event);
+    // Organizar eventos por fecha
+    for (final event in events) {
+      final dateKey = DateTime(
+        event.fechaIni.year,
+        event.fechaIni.month,
+        event.fechaIni.day,
+      );
+
+      if (_events[dateKey] == null) {
+        _events[dateKey] = [];
       }
-
-      setState(() {
-        _selectedEvents = _events[_selectedDay!] ?? [];
-        _isLoading = false;
-      });
-    } catch (e) {
-      setState(() {
-        _isLoading = false;
-        _errorMessage = 'Error al cargar eventos: ${e.toString()}';
-      });
+      _events[dateKey]!.add(event);
     }
+
+    setState(() {
+      _selectedEvents = _events[_selectedDay!] ?? [];
+      _isLoading = false;
+    });
+    //} catch (e) {
+    //  setState(() {
+    //   _isLoading = false;
+    // _errorMessage = 'Error al cargar eventos: ${e.toString()}';
+    //});
+    //}
   }
 
   @override
@@ -188,13 +194,13 @@ class _CalendarPageState extends State<CalendarPage> {
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: _getStatusColor(event.estado).withOpacity(0.2),
+                    color: _getStatusColor(event.estado!).withOpacity(0.2),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
-                    event.estado.toUpperCase(),
+                    event.estado!.toUpperCase(),
                     style: TextStyle(
-                      color: _getStatusColor(event.estado),
+                      color: _getStatusColor(event.estado!),
                       fontWeight: FontWeight.bold,
                       fontSize: 12,
                     ),

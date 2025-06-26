@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' as images;
 import 'package:flutter_application_2/Pages/home_page.dart';
 import 'package:flutter_application_2/service/auth_serivce.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -17,11 +18,12 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(centerTitle: true, title: Text('Login')),
+      appBar: AppBar(centerTitle: true, title: Text('SEM')),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            //Image(image: images.AssetImage('assets/logo.png')),
             Fondo(),
             Contenido(
               emailcontroller: _emailcontroller,
@@ -211,10 +213,10 @@ class _DatosState extends State<Datos> {
               ),
               Text('Recordarme'),
               Spacer(),
-              TextButton(
-                onPressed: () {},
-                child: Text('¿Olvidaste la contraseña?'),
-              ),
+              //TextButton(
+              //  onPressed: () {},
+              //  child: Text('¿Olvidaste la contraseña?'),
+              //),
             ],
           ),
           SizedBox(height: 30),

@@ -8,7 +8,7 @@ class Event {
   final double coste;
   final double presupuestoInicial;
   final double presupuestoModificado;
-  final String estado;
+  final String? estado;
 
   Event({
     required this.cod,
@@ -42,7 +42,7 @@ class Event {
     return Event(
       cod: json['cod'],
       fechaIni: DateTime.parse(json['fechaIni']),
-      fechaFin: DateTime.parse(json['fechafin']),
+      fechaFin: DateTime.parse(json['fechaFin']),
       horaPrevistaIni: TimeOfDay(
         hour: int.parse(timeParts[0]),
         minute: int.parse(timeParts[1]),
@@ -50,7 +50,7 @@ class Event {
       coste: json['coste'].toDouble(),
       presupuestoInicial: json['presupuestoInicial'].toDouble(),
       presupuestoModificado: json['presupuestoModificado'].toDouble(),
-      estado: json['estado'],
+      estado: json['estado'] ?? '',
     );
   }
 }
